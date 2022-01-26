@@ -1,0 +1,9 @@
+[workspace]
+members = [
+    'node',
+    'pallets/krypt',
+    'pallets/kryptokurrency',
+    'runtime',
+]
+[profile.release]
+panic = 'unwind'

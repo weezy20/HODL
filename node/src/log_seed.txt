@@ -1,0 +1,15 @@
+quality return good click quarter gauge stadium need benefit title prison plate
+on chain id - 
+name : Log
+password : password
+
+pubkey  : 5EPUZSKupMDo56F2iVtXNCcZ4BQkJTe8PSmmKACEBfhSP9Fs
+{
+    "encoded":"wb0MfsiwXnhklSGPPU/sPrwwQWaYsFJUybJN5O9IGlIAgAAAAQAAAAgAAAClag/PibgL3ATdOZNz82MerduQN1ikOhqhUFmpPmhDk2NvGuDG3oBqpUnQvK+cx13JuhtJB+lUEcPaYIANPBZhlbIWABCaDy/IrfibY9kiK+mrwCVjL2PNaVlXTU2fYMjbnWERKUQ40Muk4ZN7/rd6yt+UXN64wPZL2MenXJ1+rHHL0SA//yFyqbxeBnFfvE1S0rNrW/3UxvflJrF3",
+    "encoding":{"content":["pkcs8","sr25519"],
+    "type":["scrypt","xsalsa20-poly1305"],"version":"3"},
+    "address":"5EPUZSKupMDo56F2iVtXNCcZ4BQkJTe8PSmmKACEBfhSP9Fs",
+    "meta":{"isHardware":false,
+    "name":"Log","tags":[],
+    "whenCreated":1641060212107}
+}
