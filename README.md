@@ -2,7 +2,7 @@
 
 ### Run
 
-Use Rust's native `cargo` command to build and launch the template node:
+Use Rust's native `cargo` command to build and launch the HODL node:
 
 ```sh
 cargo run --release -- --dev --tmp
@@ -37,19 +37,19 @@ node.
 This command will start the single-node development chain with persistent state:
 
 ```bash
-./target/release/node-template --dev
+./target/release/node-hodl --dev
 ```
 
 Purge the development chain's state:
 
 ```bash
-./target/release/node-template purge-chain --dev
+./target/release/node-hodl purge-chain --dev
 ```
 
 Start the development chain with detailed logging:
 
 ```bash
-RUST_BACKTRACE=1 ./target/release/node-template -ldebug --dev
+RUST_BACKTRACE=1 ./target/release/node-hodl -ldebug --dev
 ```
 
 ### Connect with Polkadot-JS Apps Front-end
@@ -57,9 +57,9 @@ RUST_BACKTRACE=1 ./target/release/node-template -ldebug --dev
 Once the node is running locally, you can connect it with **Polkadot-JS Apps** front-end
 to interact with your chain. [Click
 here](https://polkadot.js.org/apps/#/explorer?rpc=ws://localhost:9944) connecting the Apps to your
-local node template.
+local node.
 
-## Template Structure
+## Structure
 
 A Substrate project such as this consists of a number of components that are spread across a few
 directories.
