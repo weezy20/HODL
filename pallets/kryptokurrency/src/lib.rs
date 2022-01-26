@@ -94,8 +94,9 @@ pub mod pallet {
 		fn default() -> Self {
 			let runtime_max_token: T::Balance = T::MaxTokenSupply::get();
 			let max_tokens =
-				if runtime_max_token.is_zero() { None } else { Some(runtime_max_token) };
-
+				if runtime_max_token.is_zero() { Some(T::Balance::zero()) } else { Some(runtime_max_token) };
+			// Use the balance defined in runtime/lib.rs if None is provided at Genesis
+			// Always returns a Some(_) and safe to unwrap
 			Self { balances: Default::default(), max_token_supply: max_tokens }
 		}
 	}
@@ -110,7 +111,7 @@ pub mod pallet {
 				.fold(Zero::zero(), |acc: T::Balance, &(_, curr)| acc + curr);
 			let max_tokens_at_genesis: T::Balance = match self.max_token_supply {
 				Some(t) => t,
-				None => Zero::zero(),
+				None => <Self as Default>::default().max_token_supply.unwrap(),
 			};
 			// Check if total_issuance_at_genesis doesn't overflow max_tokens_at_genesis
 			assert!(
