@@ -295,6 +295,7 @@ impl pallet_kryptokurrency::Config for Runtime {
 	type Event = Event;
 	type Balance = Balance;
 	type MaxTokenSupply = MaxTokenSupplyKryptoKurrency;
+	type ExistentialDeposit = ExistentialDeposit;
 }
 
 construct_runtime!(

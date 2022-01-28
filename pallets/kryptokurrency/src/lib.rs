@@ -79,13 +79,7 @@ pub mod pallet {
 			self.locked
 		}
 	}
-	impl<Balance> Default for AccountData<Balance> {
-		fn default() -> Self {
-			Self {
-				..Default::default()
-			}
-		}
-	}
+	
 
 	/// Storage for Total Issuance
 	#[pallet::storage]
@@ -319,68 +313,68 @@ pub mod pallet {
 
 	// Finally we are ready to implement Currenct<T::AccountId> for our pallet
 	pub use self::imbalance::{NegativeImbalance, PositiveImbalance};
-	impl<T: Config> Currency<T::AccountId> for Pallet<T> {
-		type Balance = <T as Config>::Balance;
-		type PositiveImbalance = PositiveImbalance<T>;
-		type NegativeImbalance = NegativeImbalance<T>;
+	// impl<T: Config> Currency<T::AccountId> for Pallet<T> {
+	// 	type Balance = <T as Config>::Balance;
+	// 	type PositiveImbalance = PositiveImbalance<T>;
+	// 	type NegativeImbalance = NegativeImbalance<T>;
 
-		fn total_balance(who: &T::AccountId) -> Self::Balance {
-			if let Some(account_data) = AccountStore::<T>::get(who) {
-				account_data.total()
-			} else {
-				Self::Balance::zero()
-			}
-		}
-		fn can_slash(who: &T::AccountId, value: Self::Balance) -> bool {
-			if value.is_zero() {
-				return true;
-			}
-			Self::total_balance(who) >= value
-		}
-		fn total_issuance() -> Self::Balance {
-			TotalIssuance::<T>::get().unwrap_or_default()
-		}
-		fn minimum_balance() -> Self::Balance {
-			T::ExistentialDeposit::get()
-		}
-		// Burn `amount` in TotalIssuance storage and return a PositiveImbalance w/o specifying what to do with it
-		fn burn(mut amount: Self::Balance) -> Self::PositiveImbalance {
-			if amount.is_zero() {
-				return PositiveImbalance::zero();
-			}
-			let mut imbalance = amount;
-			<TotalIssuance<T>>::mutate(|&mut total| {
-				if let Some(t) = total {
-					t.checked_sub(&amount).unwrap_or_else(|| {
-						imbalance = t;
-						Zero::zero()
-					})
-				} else {
-					Zero::zero()
-				}
-			});
-			PositiveImbalance::new(imbalance)
-		}
-		// Same as burn but in reverse
-		fn issue(mut amount: Self::Balance) -> Self::NegativeImbalance {
-			if amount.is_zero() {
-				return NegativeImbalance::zero();
-			}
-			let mut imbalance = amount;
-			<TotalIssuance<T>>::mutate(|&mut total| {
-				if let Some(t) = total {
-					t.checked_add(&amount).unwrap_or_else(|| {
-						T::MaxTokenSupply::get()
-					})
-				} else {
-					amount
-				}
-			});
-			NegativeImbalance::new(imbalance)
-		}
-		fn free_balance(who: &T::AccountId) -> Self::Balance {
-			let account_data = Self::account_of(who).unwrap_or_default();
-			account_data.free()
-		}
-	} // End of Currency impl
+	// 	fn total_balance(who: &T::AccountId) -> Self::Balance {
+	// 		if let Some(account_data) = AccountStore::<T>::get(who) {
+	// 			account_data.total()
+	// 		} else {
+	// 			Self::Balance::zero()
+	// 		}
+	// 	}
+	// 	fn can_slash(who: &T::AccountId, value: Self::Balance) -> bool {
+	// 		if value.is_zero() {
+	// 			return true;
+	// 		}
+	// 		Self::total_balance(who) >= value
+	// 	}
+	// 	fn total_issuance() -> Self::Balance {
+	// 		TotalIssuance::<T>::get().unwrap_or_default()
+	// 	}
+	// 	fn minimum_balance() -> Self::Balance {
+	// 		T::ExistentialDeposit::get()
+	// 	}
+	// 	// Burn `amount` in TotalIssuance storage and return a PositiveImbalance w/o specifying what to do with it
+	// 	fn burn(mut amount: Self::Balance) -> Self::PositiveImbalance {
+	// 		if amount.is_zero() {
+	// 			return PositiveImbalance::zero();
+	// 		}
+	// 		let mut imbalance = amount;
+	// 		<TotalIssuance<T>>::mutate(|&mut total| {
+	// 			if let Some(t) = total {
+	// 				t.checked_sub(&amount).unwrap_or_else(|| {
+	// 					imbalance = t;
+	// 					Zero::zero()
+	// 				})
+	// 			} else {
+	// 				Zero::zero()
+	// 			}
+	// 		});
+	// 		PositiveImbalance::new(imbalance)
+	// 	}
+	// 	// Same as burn but in reverse
+	// 	fn issue(mut amount: Self::Balance) -> Self::NegativeImbalance {
+	// 		if amount.is_zero() {
+	// 			return NegativeImbalance::zero();
+	// 		}
+	// 		let mut imbalance = amount;
+	// 		<TotalIssuance<T>>::mutate(|&mut total| {
+	// 			if let Some(t) = total {
+	// 				t.checked_add(&amount).unwrap_or_else(|| {
+	// 					T::MaxTokenSupply::get()
+	// 				})
+	// 			} else {
+	// 				amount
+	// 			}
+	// 		});
+	// 		NegativeImbalance::new(imbalance)
+	// 	}
+	// 	fn free_balance(who: &T::AccountId) -> Self::Balance {
+	// 		let account_data = Self::account_of(who).unwrap_or_default();
+	// 		account_data.free()
+	// 	}
+	// } // End of Currency impl
 } // End of pallet
