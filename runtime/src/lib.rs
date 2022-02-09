@@ -6,8 +6,6 @@
 #[cfg(feature = "std")]
 include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 
-use frame_support::traits::Currency;
-use pallet_aura::pallet;
 use pallet_grandpa::{
 	fg_primitives, AuthorityId as GrandpaId, AuthorityList as GrandpaAuthorityList,
 };
@@ -201,6 +199,63 @@ parameter_types! {
 	pub const MaxAuthorities: u32 = 32;
 }
 
+/// The BABE epoch configuration at genesis.
+pub const BABE_GENESIS_EPOCH_CONFIG: sp_consensus_babe::BabeEpochConfiguration =
+	sp_consensus_babe::BabeEpochConfiguration {
+		// 1 - c is the probability of a slot going empty
+		// c represents a tuple in which is a fraction of the expected primary slots/all slots
+		c: PRIMARY_PROBABILITY,
+		allowed_slots: sp_consensus_babe::AllowedSlots::PrimaryAndSecondaryPlainSlots,
+	};
+// /// If using BABE with secondary slots (default) then all of the slots will
+// /// always be assigned, in which case `MILLISECS_PER_BLOCK` and
+// /// `SLOT_DURATION` should have the same value.
+// pub const MILLISECS_PER_BLOCK: u64 = 3000;
+// pub const SECS_PER_BLOCK: u64 = MILLISECS_PER_BLOCK / 1000;
+pub const PRIMARY_PROBABILITY: (u64, u64) = (1, 4);
+pub const EPOCH_DURATION_IN_BLOCKS: BlockNumber = 10 * MINUTES; // 10*10 = 100 blocks for 6000 milisecs per block
+pub const EPOCH_DURATION_IN_SLOTS: u64 = {
+	const SLOT_FILL_RATE: f64 = SLOT_DURATION as f64 / MILLISECS_PER_BLOCK as f64;
+
+	(EPOCH_DURATION_IN_BLOCKS as f64 * SLOT_FILL_RATE) as u64
+};
+
+// parameter_types! {
+// 	// NOTE: Currently it is not possible to change the epoch duration after the chain has started.
+// 	//       Attempting to do so will brick block production.
+// 	pub const EpochDurationInSlots: u64 = EPOCH_DURATION_IN_SLOTS;
+// 	pub const ExpectedBlockTime: Moment = MILLISECS_PER_BLOCK; // Get<Moment> expected
+// 	// No idea what report longevity is doing
+// 	pub const ReportLongevity: u64 =
+// 		EpochDuration::get();
+// 		// BondingDuration::get() as u64 * SessionsPerEra::get() as u64 * EpochDuration::get();
+// }
+
+// impl pallet_babe::Config for Runtime {
+// 	type EpochDuration = EpochDurationInSlots;
+// 	type ExpectedBlockTime = ExpectedBlockTime;
+// 	type EpochChangeTrigger = pallet_babe::SameAuthoritiesForever; // We don't change authority set for now
+// 	type DisabledValidators = Session;
+
+// 	type KeyOwnerProofSystem = Historical; // reference to pallet_session::historical::Pallet<Runtime>
+
+// 	type KeyOwnerProof = <Self::KeyOwnerProofSystem as KeyOwnerProofSystem<(
+// 		KeyTypeId,
+// 		pallet_babe::AuthorityId,
+// 	)>>::Proof;
+
+// 	type KeyOwnerIdentification = <Self::KeyOwnerProofSystem as KeyOwnerProofSystem<(
+// 		KeyTypeId,
+// 		pallet_babe::AuthorityId,
+// 	)>>::IdentificationTuple;
+
+// 	type HandleEquivocation =
+// 		pallet_babe::EquivocationHandler<Self::KeyOwnerIdentification, Offences, ReportLongevity>;
+
+// 	type WeightInfo = ();
+// 	type MaxAuthorities = MaxAuthorities;
+// }
+
 impl pallet_aura::Config for Runtime {
 	type AuthorityId = AuraId;
 	type DisabledValidators = ();
@@ -344,7 +399,20 @@ pub type Executive = frame_executive::Executive<
 	AllPallets,
 >;
 
+sp_api::decl_runtime_apis! {
+	pub trait KryptTotal {
+		fn total_issuance_krypt_api() -> u128;
+	}
+}
+
 impl_runtime_apis! {
+
+	impl crate::KryptTotal<Block> for Runtime {
+		fn total_issuance_krypt_api() -> u128 {
+			Krypt::total_issued()
+		}
+	}
+
 	impl sp_api::Core<Block> for Runtime {
 		fn version() -> RuntimeVersion {
 			VERSION
